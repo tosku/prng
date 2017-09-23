@@ -15,15 +15,14 @@ module Data.MTRNG
     ( Seed
     , randomBools
     , randomDoubles
-    , uniqueRandomInts
+    , randomPermutation
     , sample
     ) where
 
 import Data.Maybe
-import         System.Random.Mersenne.Pure64 as MT
-import qualified  Data.Vector as V
-import Data.IntMap (IntMap)
-import qualified Data.IntMap as IntMap
+{-import qualified Data.List as List-}
+import Data.List
+import System.Random.Mersenne.Pure64 as MT
 
 
 type Seed = Int
@@ -41,43 +40,26 @@ randomBools l s p        =
               b          = d > p
   in rndbls l (getRNG s)
 
+
+-- | permutates list using a seed
+randomPermutation :: [a] -> Seed -> [a]
+randomPermutation ls s = 
+  let randoms = zip (randomDoubles (length ls) s) ls
+   in map snd $ sortOn fst randoms
+
 -- | Sample from list 
 sample :: [a] -> Int -> Seed -> [a]
-sample c n s = c
-
--- | range (from,to) number of Ints 
-uniqueRandomInts :: Int -> Seed -> [Int]
-uniqueRandomInts n s = do
-  let ls = IntMap.fromList (zip [1..n] [1..n])
-  let randoms = zip [1..n] 
-                $ map ((\l -> if l > n then n else l ) . floor) $ map (\r -> ((fromIntegral n * r)) + 1) (randomDoubles n s)
-  if (n <= 0) then
-    []
-  else 
-    map snd (IntMap.toList $ intmap ls randoms)
-    where intmap ls randoms = foldl (\out (fk,sk) -> let mfv = IntMap.lookup fk out
-                                                         msv = IntMap.lookup sk out
-                                                         unjust = fromMaybe (-1)
-                                                     in IntMap.insert sk (unjust mfv) $ IntMap.insert fk (unjust msv) out
-                                    ) ls randoms
-        
-    -- foldl (l z -> z !! l) ls
-    -- let range = to - from + 1
-    --     sample 0 _ _ = empty
-    --     sample l g oldsample = 
-    --       case member newrandom oldsample of 
-    --       True -> sample l g' oldsample
-    --       False -> insert newrandom (sample (l-1) g' (sample l g oldsample))
-    --       where (d, g') = MT.randomDouble g
-    --             newrandom = floor (d * (fromIntegral range))
-    -- in toList $ sample n (getRNG s) empty
+sample c n s 
+  | n > length c = []
+  | n < 0 = []
+  | otherwise = take n $ randomPermutation c s
 
 -- | returns a list of Doubles given the length of the list list and the Seed
 randomDoubles :: Int -> Seed -> [Double]
 randomDoubles l s = 
   let rnddbls 0 _ = []
       rnddbls n g = d:(rnddbls (n-1) g')
-        where (d,g') = MT.randomDouble g
+        where (d,g') = g `seq` MT.randomDouble g
   in rnddbls l (getRNG s)
 
 -- ! Marsaglia algorithm (needs two seeds)
