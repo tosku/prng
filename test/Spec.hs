@@ -1,8 +1,10 @@
 import Test.Test
-import Test.MTRNG as M
+import Test.MTRNG as MT
+import Test.MWC as MWC
 
 main :: IO ()
 main = do
   putStrLn "\n"
   putStrLn $ "Test Begins"
-  reportTests $ M.fastTests
+  {-reportTests $ MT.fastTests -}
+  reportTests $ MT.fastTests ++ MWC.fastTests

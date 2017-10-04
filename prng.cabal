@@ -15,8 +15,12 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Data.MTRNG
+  exposed-modules:     Data.PRNG
+                     , Data.PRNG.MTRNG
                      , Test.MTRNG
+                     , Data.PRNG.ACMWC
+                     , Data.PRNG.MWC
+                     , Test.MWC
                      , Test.Test
   build-depends:       base >= 4.7 && < 5
                      , ansi-terminal >= 0.6.3.1
@@ -35,12 +39,16 @@ library
                      , unix
                      , async >= 2.1.1
                      , aeson
+                     , mwc-random 
+                     , AC-Random >= 0.1
+                     , primitive
   default-language:    Haskell2010
 
 executable prng-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -O2 -threaded -rtsopts -with-rtsopts=-N
+  --ghc-options:        -O2 -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:         -O2
   build-depends:       prng
                      , base >= 4.7 && < 5
                      , ansi-terminal >= 0.6.3.1
@@ -50,6 +58,7 @@ executable prng-exe
                      , mersenne-random-pure64 >= 0.2.0.5
                      , vector
                      , lens >= 4.15.1
+                     , primitive
                      , stm >= 2.4.4.1
                      , Stack >= 0.3.2
                      , template-haskell >= 2.11.1.0
@@ -60,6 +69,8 @@ executable prng-exe
                      , async >= 2.1.1
                      , aeson
                      , criterion
+                     , mwc-random 
+                     , AC-Random >= 0.1
   default-language:    Haskell2010
 
 test-suite prng-test
