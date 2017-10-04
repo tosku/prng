@@ -5,22 +5,29 @@ import Data.IntMap
 import qualified Data.Vector                   as V
 
 import Test.Test
-import Data.MTRNG
+import qualified Data.PRNG as RNG
+import qualified Data.PRNG.MTRNG as MT
 
 fastTests :: [Test]
 fastTests = [ test1
             , test2
             , test3
+            , test4
             ]
 
 test1 :: Test
 test1 = do
-  let name = "Check random Double generation"
-      n   = 1000000000
-      seed = 139
-      ts = randomDoubles n seed
-  case length ts == n of
-    True -> testPassed name $ show "passed!"
+  let name = "Checking MT random Double generation"
+      n   = 1000000
+      seed = 136
+      mtrng = RNG.getRNG :: Int -> MT.MTRNG
+      ts = RNG.randomDoubles (mtrng seed) n 
+      ts' r n
+        | n ==  0 = []
+        | otherwise =  (d,g') : ts' g' (n-1)
+            where (d,g') = RNG.randomDouble r
+  case ts == L.map fst (ts' (mtrng seed) n)  of
+    True -> testPassed name $ show (sum ts) ++ show "passed!"
     False -> testFailed name $ (,) (show "not found all") (show "sorry")
 
 test2 :: Test
@@ -28,8 +35,8 @@ test2 = do
   let name = "Check permutations contains all elements"
       n   = 10000
       seed = 139
-      {-out  = all (L.map (\ i -> elem i (uniqueRandomInts n seed)) [1..n])-}
-      ts = randomPermutation [1..n] seed
+      mtrng = RNG.getRNG :: Int -> MT.MTRNG
+      ts = RNG.randomPermutation (mtrng seed) [1..n]
       out  = L.map (\ i -> elem i ts) [1..n]
   case all (== True) out of
     True -> testPassed name $ show "passed!"
@@ -38,11 +45,27 @@ test2 = do
 test3 :: Test
 test3 = do
   let name = "Check sampling"
-      n   = 10000
-      seed = 139
-      x = 40
-      {-out  = all (L.map (\ i -> elem i (uniqueRandomInts n seed)) [1..n])-}
-      out = sample [1..n] x seed
-  case length out == 40 of
-    True -> testPassed name $ show out ++ show "passed!"
-    False -> testFailed name $ (,) (show "not found all") (show "sorry")
+      n   = 1000000
+      seed = 135
+      mtrng = RNG.getRNG :: Int -> MT.MTRNG
+      x = 4
+      ls = [1..n]
+      sample = RNG.sample (mtrng seed) x ls
+      out  = L.map (\ i -> elem i ls) sample
+  case all (== True) out  && length sample == x of
+    True -> testPassed name $ show sample ++ show "passed!"
+    False -> testFailed name $ (,) (show sample) (show "sorry")
+
+test4 :: Test
+test4 = do
+  let name = "Check sampling"
+      n   = 1000000
+      seed = 135
+      mtrng = RNG.getRNG :: Int -> MT.MTRNG
+      x = 4
+      ls = [1..n]
+      sample = RNG.sample (mtrng seed) x ls
+      out  = L.map (\ i -> elem i ls) sample
+  case all (== True) out  && length sample == x of
+    True -> testPassed name $ show sample ++ show "passed!"
+    False -> testFailed name $ (,) (show sample) (show "sorry")
