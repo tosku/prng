@@ -3,7 +3,7 @@ module Main where
 import Criterion.Main
 import qualified Data.PRNG as RNG
 import qualified Data.PRNG.MTRNG as MT
-import qualified Data.PRNG.ACMWC as ACMWC
+{-import qualified Data.PRNG.ACMWC as ACMWC-}
 import qualified Data.PRNG.MWC as MWC
 import System.Random.MWC
 import Control.Monad.Primitive
@@ -21,15 +21,15 @@ main = do
       s = 114
       mtrng = RNG.getRNG :: Int -> MT.MTRNG
       mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
-      acmwcrng = RNG.getRNG :: Int -> ACMWC.MWCRNG
+      {-acmwcrng = RNG.getRNG :: Int -> ACMWC.MWCRNG-}
   writeFile "test.out" $ 
     (show $ sum $ RNG.randomDoubles (mtrng s) n )
     ++ "\n"
     ++ (show $ sum $ RNG.randomDoubles (mwcrng s) n )
     ++ "\n"
     ++ (show $ sum $ RNG.randomDoubles (mwcrng s) (2*n)) 
-    ++ "\n"
-    ++ (show $ sum $ RNG.randomDoubles (acmwcrng s) n )
+    {-++ "\n"-}
+    {-++ (show $ sum $ RNG.randomDoubles (acmwcrng s) n )-}
   defaultMain [ 
                 {-bgroup "mtrng" [ bench "10^6" $ whnf (\s -> sum $ RNG.randomDoubles (mtrng s) n) s-}
                                {-, bench "40^6" $ whnf (\s -> sum $ RNG.randomDoubles (mtrng s) (4 * n)) s-}

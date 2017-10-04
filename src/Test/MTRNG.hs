@@ -12,7 +12,6 @@ fastTests :: [Test]
 fastTests = [ test1
             , test2
             , test3
-            , test4
             ]
 
 test1 :: Test
@@ -56,16 +55,3 @@ test3 = do
     True -> testPassed name $ show sample ++ show "passed!"
     False -> testFailed name $ (,) (show sample) (show "sorry")
 
-test4 :: Test
-test4 = do
-  let name = "Check sampling"
-      n   = 1000000
-      seed = 135
-      mtrng = RNG.getRNG :: Int -> MT.MTRNG
-      x = 4
-      ls = [1..n]
-      sample = RNG.sample (mtrng seed) x ls
-      out  = L.map (\ i -> elem i ls) sample
-  case all (== True) out  && length sample == x of
-    True -> testPassed name $ show sample ++ show "passed!"
-    False -> testFailed name $ (,) (show sample) (show "sorry")
