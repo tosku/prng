@@ -8,7 +8,6 @@ import qualified Data.PRNG.MWC as MWC
 import System.Random.MWC
 import Control.Monad.Primitive
 import qualified Data.Vector as V
-import qualified Graphics.Gnuplot.Frame.OptionSet as Opts
 
 
 
