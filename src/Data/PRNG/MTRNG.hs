@@ -23,7 +23,7 @@ type MTRNG = MT.PureMT
 instance PRNG.RNG MT.PureMT where
   getRNG s = MT.pureMT $ fromIntegral s
   randomDouble = MT.randomDouble
-  randomDoubles r l = 
+  uniformDoubles r l = 
     let rnddbls 0 _ = []
         rnddbls n g = d:(rnddbls (n-1) g')
           where (d,g') = PRNG.randomDouble g

@@ -12,11 +12,15 @@
 ## Compilation
 - Benchmarks between Mersenne Twister and MWC
 
-```stack build && stack exec prng-exe -- --output rng.html && open rng.html```
+```
+stack build && stack exec prng-exe -- --output rng.html && open rng.html
+```
 
 - Test
 
-```stack test```
+```
+stack test
+```
 
 
 

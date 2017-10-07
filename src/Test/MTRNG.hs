@@ -12,22 +12,23 @@ fastTests :: [Test]
 fastTests = [ test1
             , test2
             , test3
+            , test4
             ]
 
 test1 :: Test
 test1 = do
-  let name = "Checking MT random Double generation"
+  let name = "Checking MT uniform Double generation"
       n   = 1000000
       seed = 136
       mtrng = RNG.getRNG :: Int -> MT.MTRNG
-      ts = RNG.randomDoubles (mtrng seed) n 
+      ts = RNG.uniformDoubles (mtrng seed) n 
       ts' r n
         | n ==  0 = []
         | otherwise =  (d,g') : ts' g' (n-1)
             where (d,g') = RNG.randomDouble r
   case ts == L.map fst (ts' (mtrng seed) n)  of
     True -> testPassed name $ show (sum ts) ++ show "passed!"
-    False -> testFailed name $ (,) (show "not found all") (show "sorry")
+    False -> testFailed name $ (,) (show "problem with generation") (show "sorry")
 
 test2 :: Test
 test2 = do
@@ -54,4 +55,18 @@ test3 = do
   case all (== True) out  && length sample == x of
     True -> testPassed name $ show sample ++ show "passed!"
     False -> testFailed name $ (,) (show sample) (show "sorry")
+
+test4 :: Test
+test4 = do
+  let name = "Checking MT normal distribution"
+      n   = 10000
+      seed = 133
+      μ = 4
+      σ = 20
+      mtrng = RNG.getRNG :: Int -> MT.MTRNG
+      ns = RNG.normalDoubles (mtrng seed) μ σ n 
+      us = RNG.uniformDoubles (mtrng seed) n 
+  case ns /= us  of
+    True -> testPassed name $ show ((sum ns) / fromIntegral n) ++ show "passed!"
+    False -> testFailed name $ (,) (show "normal == uniform") (show "sorry")
 

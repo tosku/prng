@@ -16,18 +16,23 @@ import qualified Data.Vector as V
 
 -- Our benchmark harness.
 main = do
-  let n = 1000000
+  let n = 40000
       n2 = 2 * n
       s = 114
       mtrng = RNG.getRNG :: Int -> MT.MTRNG
       mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
       {-acmwcrng = RNG.getRNG :: Int -> ACMWC.MWCRNG-}
-  writeFile "test.out" $ 
-    (show $ sum $ RNG.randomDoubles (mtrng s) n )
-    ++ "\n"
-    ++ (show $ sum $ RNG.randomDoubles (mwcrng s) n )
-    ++ "\n"
-    ++ (show $ sum $ RNG.randomDoubles (mwcrng s) (2*n)) 
+  writeFile "test1.out" $ 
+    (show $ RNG.normalDoubles (mtrng s) 2.4 1.2 n )
+  {-writeFile "test2.out" $ -}
+    {-(show $ RNG.normalDoubles (mtrng s) 2.4 10.3 n )-}
+  {-writeFile "test3.out" $ -}
+    {-(show $ RNG.normalDoubles (mwcrng s) 2.4 10.3 n )-}
+    {-(show $ sum $ RNG.uniformDoubles (mtrng s) n )-}
+    {-++ "\n"-}
+    {-++ (show $ sum $ RNG.uniformDoubles (mwcrng s) n )-}
+    {-++ "\n"-}
+    {-++ (show $ sum $ RNG.uniformDoubles (mwcrng s) (2*n)) -}
     {-++ "\n"-}
     {-++ (show $ sum $ RNG.randomDoubles (acmwcrng s) n )-}
   defaultMain [ 
@@ -39,13 +44,10 @@ main = do
                     {-]-}
                bgroup "MWC-sampling" [ bench "1000" $ whnf (\s -> RNG.sample (mwcrng s) 100 [1..1000]) s
                                 , bench "10^6" $ whnf (\s -> RNG.sample (mwcrng s) 100 [1..n]) s
+                                , bench "normal distribution 10^6" $ whnf (\s -> RNG.normalDoubles (mwcrng s) 2.3 3.2 n) s
                     ]
               , bgroup "MT-sampling" [ bench "1000" $ whnf (\s -> RNG.sample (mtrng s) 100 [1..1000]) s
                                 , bench "10^6" $ whnf (\s -> RNG.sample (mtrng s) 100 [1..n]) s
+                                , bench "normal distribution 10^6" $ whnf (\s -> RNG.normalDoubles (mtrng s) 2.3 3.2 n) s
                     ]
-              {-, bgroup "acmwcrng" [ bench "1" $ whnf (\s -> RNG.randomDouble (acmwcrng s)) s-}
-                                {-, bench "2" $ whnf (\s -> sum $ RNG.randomDoubles (acmwcrng s) n) s-}
-                                {-, bench "3" $ whnf (\s -> sum $ RNG.randomDoubles (acmwcrng s) (2 * n)) s-}
-                                {-, bench "4" $ whnf (\s -> sum $ RNG.randomDoubles (acmwcrng s) (4 * n)) s-}
-                    {-]-}
     ]

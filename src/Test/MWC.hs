@@ -12,15 +12,16 @@ fastTests :: [Test]
 fastTests = [ test1
             , test2
             , test3
+            , test4
             ]
 
 test1 :: Test
 test1 = do
-  let name = "Checking MWC random Double generation"
+  let name = "Checking MWC uniform Double generation"
       n   = 10000
       seed = 136
       mwc = RNG.getRNG :: Int -> MWC.MWCRNG
-      ts = RNG.randomDoubles (mwc seed) n 
+      ts = RNG.uniformDoubles (mwc seed) n 
       ts' r n
         | n ==  0 = []
         | otherwise =  (d,g') : ts' g' (n-1)
@@ -54,4 +55,18 @@ test3 = do
   case all (== True) out  && length sample == x of
     True -> testPassed name $ show sample ++ show "passed!"
     False -> testFailed name $ (,) (show sample) (show "sorry")
+
+test4 :: Test
+test4 = do
+  let name = "Checking MWC normal distribution"
+      n   = 10000
+      seed = 131
+      μ = 4
+      σ = 20
+      mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
+      ns = RNG.normalDoubles (mwcrng seed) μ σ n 
+      us = RNG.uniformDoubles (mwcrng seed) n 
+  case ns /= us  of
+    True -> testPassed name $ show ((sum ns) / fromIntegral n) ++ show "passed!"
+    False -> testFailed name $ (,) (show "normal == uniform") (show "sorry")
 

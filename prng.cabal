@@ -40,7 +40,7 @@ library
                      , async >= 2.1.1
                      , aeson
                      , mwc-random 
-                     --, AC-Random >= 0.1
+                     , erf >= 2.0.0.0
                      , primitive
   default-language:    Haskell2010
 
@@ -68,6 +68,7 @@ executable prng-exe
                      , unix
                      , async >= 2.1.1
                      , aeson
+                     , erf >= 2.0.0.0
                      , criterion
                      , mwc-random 
                      --, AC-Random >= 0.1
