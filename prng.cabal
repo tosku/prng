@@ -41,6 +41,7 @@ library
                      , aeson
                      , mwc-random 
                      , erf >= 2.0.0.0
+                     , math-functions >= 0.1.7.0
                      , primitive
   default-language:    Haskell2010
 
@@ -69,8 +70,11 @@ executable prng-exe
                      , async >= 2.1.1
                      , aeson
                      , erf >= 2.0.0.0
+                     , math-functions >= 0.1.7.0
                      , criterion
                      , mwc-random 
+                     , Histogram >= 0.1.0.2
+                     , gnuplot >= 0.5.4.2
                      --, AC-Random >= 0.1
   default-language:    Haskell2010
 

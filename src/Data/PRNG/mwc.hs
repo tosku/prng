@@ -34,7 +34,7 @@ instance PRNG.RNG Seed where
     y <- uniform x
     s' <- save x
     return (y, s')
-  uniformDoubles s n = runST $ do
+  uniformSample s n = runST $ do
     gen <- restore s
     vs <- uniformVector gen n
     return $ V.toList vs

@@ -18,10 +18,10 @@ fastTests = [ test1
 test1 :: Test
 test1 = do
   let name = "Checking MWC uniform Double generation"
-      n   = 10000
+      n   = 1000
       seed = 136
       mwc = RNG.getRNG :: Int -> MWC.MWCRNG
-      ts = RNG.uniformDoubles (mwc seed) n 
+      ts = RNG.uniformSample (mwc seed) n 
       ts' r n
         | n ==  0 = []
         | otherwise =  (d,g') : ts' g' (n-1)
@@ -33,7 +33,7 @@ test1 = do
 test2 :: Test
 test2 = do
   let name = "Check permutations contains all elements"
-      n   = 10000
+      n   = 1000
       seed = 139
       mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
       ts = RNG.randomPermutation (mwcrng seed) [1..n]
@@ -45,7 +45,7 @@ test2 = do
 test3 :: Test
 test3 = do
   let name = "Check sampling"
-      n   = 1000000
+      n   = 1000
       seed = 135
       mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
       x = 4
@@ -59,13 +59,13 @@ test3 = do
 test4 :: Test
 test4 = do
   let name = "Checking MWC normal distribution"
-      n   = 10000
+      n   = 1000
       seed = 131
       μ = 4
       σ = 20
       mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
-      ns = RNG.normalDoubles (mwcrng seed) μ σ n 
-      us = RNG.uniformDoubles (mwcrng seed) n 
+      ns = RNG.normalSample (mwcrng seed) μ σ n 
+      us = RNG.uniformSample (mwcrng seed) n 
   case ns /= us  of
     True -> testPassed name $ show ((sum ns) / fromIntegral n) ++ show "passed!"
     False -> testFailed name $ (,) (show "normal == uniform") (show "sorry")
