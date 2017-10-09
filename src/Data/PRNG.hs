@@ -62,21 +62,26 @@ sample r k c
 -- | List of doubles from nornal distribution given 
 -- RNG -> μ -> σ -> length of list
 normalSample :: RNG r => r -> Double -> Double -> Int -> [Double]
-normalSample r μ σ n =
-  let uds = uniformSample r n
-      invx x = σ * x + μ
-   in map (invx . invnormcdf) uds
+normalSample r μ σ n 
+  | σ == 0 = replicate n μ
+  | otherwise =
+    let uds = uniformSample r n
+        invx x = σ * x + μ
+     in map (invx . invnormcdf) uds
 
 -- | Sample truncated nomral μ -> σ -> left bound -> right bound -> length of list
 truncatedNormalSample :: RNG r => r -> Double -> Double -> Double -> Double -> Int -> [Double]
-truncatedNormalSample r μ σ f t n =
-  let uds = uniformSample r n
-      sqt = sqrt 2
-      invtruncnormcdf y = μ - sqt * σ * inverf (
-        - ((-1) + y) * erf((-f + μ)/(sqt * σ)) +
-        y * erf((μ - t)/(sqt * σ))
-        )
-   in map invtruncnormcdf uds
+truncatedNormalSample r μ σ f t n
+  | (μ < f) || (μ > t) = []
+  | σ == 0 = replicate n μ
+  | otherwise =
+    let uds = uniformSample r n
+        sqt = sqrt 2
+        invtruncnormcdf y = μ - sqt * σ * inverf (
+          - ((-1) + y) * erf((-f + μ)/(sqt * σ)) +
+          y * erf((μ - t)/(sqt * σ))
+          )
+     in map invtruncnormcdf uds
 
 
 -- | probability of i successes of binomial distribution
