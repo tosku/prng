@@ -1,9 +1,8 @@
 module Main where
 
-import qualified Criterion.Main as Cr.Main
+import Criterion.Main
 import qualified Data.PRNG as RNG
 import qualified Data.PRNG.MTRNG as MT
-{-import qualified Data.PRNG.ACMWC as ACMWC-}
 import qualified Data.PRNG.MWC as MWC
 import System.Random.MWC
 import Control.Monad.Primitive
@@ -18,12 +17,14 @@ import Graphics.Histogram
 
 -- Our benchmark harness.
 main = do
-  let n = 1000000
-      n2 = 2 * n
+  let n = 1000000 :: Int
+      μ = 1.0
+      σ = 0.2
+      lb = 0.0
+      rb = 2.0
       s = 114
       mtrng = RNG.getRNG :: Int -> MT.MTRNG
       mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
-      {-acmwcrng = RNG.getRNG :: Int -> ACMWC.MWCRNG-}
   {-writeFile "test/binomial1.csv" $ -}
     {-(show $ RNG.binomialSample (mtrng s) n 0.5 n )-}
       normsample = RNG.normalSample (mtrng s) 1 4.3 n
@@ -32,7 +33,6 @@ main = do
              Opts.yLabel "y" $ 
              Opts.xLabel "x" $ 
              defOpts histnr
-      {-normtruncsample = RNG.truncatedNormalSample (mwcrng s) 1 0.001 0 2.0 n -}
       normtruncsample = RNG.truncatedNormalSample (mtrng s) 1 0.2 0 2.0 n 
       histtr = histogram binScott normtruncsample
       optstr = Opts.title "truncated" $ 
@@ -42,34 +42,11 @@ main = do
   print $ show $ sum normtruncsample
   plotAdv "test/normal.eps" optsnr histnr
   plotAdv "test/trunc.eps" optstr histtr
-  {-writeFile "test/normaltrunc1.csv" $ -}
-    {-(show $ normtruncsample)-}
-  {-writeFile "test2.out" $ -}
-    {-(show $ RNG.normalSample (mtrng s) 2.4 10.3 n )-}
-  {-writeFile "test3.out" $ -}
-    {-(show $ RNG.normalSample (mwcrng s) 2.4 10.3 n )-}
-    {-(show $ sum $ RNG.uniformDoubles (mtrng s) n )-}
-    {-++ "\n"-}
-    {-++ (show $ sum $ RNG.uniformDoubles (mwcrng s) n )-}
-    {-++ "\n"-}
-    {-++ (show $ sum $ RNG.uniformDoubles (mwcrng s) (2*n)) -}
-    {-++ "\n"-}
-    {-++ (show $ sum $ RNG.randomDoubles (acmwcrng s) n )-}
-  {-defaultMain [ -}
-                {-bgroup "mtrng" [ bench "10^6" $ whnf (\s -> sum $ RNG.randomDoubles (mtrng s) n) s-}
-                               {-, bench "40^6" $ whnf (\s -> sum $ RNG.randomDoubles (mtrng s) (4 * n)) s-}
-                               {-, bench "10^7" $ whnf (\s -> sum $ RNG.randomDoubles (mtrng s) (10 * n)) s-}
-                               {-, bench "getRNG" $ whnf (\s -> RNG.randomDouble (mtrng s)) s-}
-                               {-, bench "getRNG" $ whnf (\s -> RNG.randomDouble (mtrng s)) s-}
-                    {-]-}
-               {-bgroup "MWC-sampling" [ bench "1000" $ whnf (\s -> RNG.sample (mwcrng s) 100 [1..1000]) s-}
-                                {-, bench "10^6" $ whnf (\s -> RNG.sample (mwcrng s) 100 [1..n]) s-}
-                                {-, bench "normal distribution 10^6" $ whnf (\s -> RNG.normalSample (mwcrng s) 2.3 3.2 n) s-}
-                                {-, bench "binomial distribution 10^6" $ whnf (\s -> RNG.binomialSample (mwcrng s) n 0.5 n) s-}
-                    {-]-}
-              {-, bgroup "MT-sampling" [ bench "1000" $ whnf (\s -> RNG.sample (mtrng s) 100 [1..1000]) s-}
-                                {-, bench "10^6" $ whnf (\s -> RNG.sample (mtrng s) 100 [1..n]) s-}
-                                {-, bench "normal distribution 10^6" $ whnf (\s -> RNG.normalSample (mtrng s) 2.3 3.2 n) s-}
-                                {-, bench "binomial distribution 10^6" $ whnf (\s -> RNG.binomialSample (mtrng s) n 0.5 n) s-}
-                    {-]-}
-    {-]-}
+  defaultMain [ 
+                bgroup "mtrng" [ bench "normal sample" $ whnf (\s -> sum $ RNG.normalSample (mtrng s) μ σ n) s
+                               , bench "truncated normal" $ whnf (\s -> sum (RNG.truncatedNormalSample (mtrng s) μ σ lb rb n)) s
+                    ]
+              , bgroup "MWC-sampling" [ bench "normal sample" $ whnf (\s -> sum $ RNG.normalSample (mwcrng s) μ σ n) s
+                                     , bench "truncated normal" $ whnf (\s -> sum $ RNG.truncatedNormalSample (mwcrng s) μ σ lb rb n) s
+                    ]
+    ]
