@@ -31,7 +31,6 @@ library
                      , vector
                      , lens >= 4.15.1
                      , stm >= 2.4.4.1
-                     , Stack >= 0.3.2
                      , template-haskell >= 2.11.1.0
                      , monad-par >= 0.3.4.8
                      , containers >= 0.5.7.1
@@ -61,7 +60,6 @@ executable prng-exe
                      , lens >= 4.15.1
                      , primitive
                      , stm >= 2.4.4.1
-                     , Stack >= 0.3.2
                      , template-haskell >= 2.11.1.0
                      , monad-par >= 0.3.4.8
                      , containers >= 0.5.7.1
