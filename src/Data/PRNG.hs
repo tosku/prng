@@ -15,6 +15,7 @@ module Data.PRNG
     ( Seed
     , RNG (..)
     , randomBools
+    , randomInts
     , randomPermutation
     , sample
     , normalSample
@@ -34,6 +35,7 @@ type Seed = Int
 class RNG r where 
   getRNG :: Seed -> r
   randomDouble :: r -> (Double, r)
+  randomInt :: r -> (Int, r)
   uniformSample :: r -> Int -> [Double]
 
 
@@ -45,6 +47,14 @@ randomBools r l p        =
         where (d,g')     = randomDouble g
               b          = d > p
   in rndbls l r
+
+-- | booleans given the length of the list the probability p and the seed
+randomInts :: RNG r => r -> Int -> [Int]
+randomInts r l         =
+  let rnds 0 _         = []
+      rnds n g         = i:(rnds (n-1) g')
+        where (i,g')   = randomInt g
+  in rnds l r
 
 -- | Permutates list using a RNG, given that the list has fewer elements than
 -- the minimum between  2^64 which is the precision of Double and the period of the prng,the position probability of every element is uniform.

@@ -14,6 +14,7 @@ fastTests = [ test1
             , test3
             , test4
             , test5
+            , test6
             ]
 
 test1 :: Test
@@ -85,3 +86,14 @@ test5 = do
   case all (\x -> (x >= f) && (x <= t) ) ns  of
     True -> testPassed name $ show ((sum ns) / fromIntegral n) ++ show "passed!"
     False -> testFailed name $ (,) (show "out of bounds") (show "sorry")
+
+test6 :: Test
+test6 = do
+  let name = "Checking MT Integer sampling"
+      n   = 10
+      seed = 133
+      mtrng = RNG.getRNG :: Int -> MT.MTRNG
+      ints = RNG.randomInts (mtrng seed) n 
+  case length ints == n of
+    True -> testPassed name $ show (ints) ++ show "passed!"
+    False -> testFailed name $ (,) (show "length error") (show ints)

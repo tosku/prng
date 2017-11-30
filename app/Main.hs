@@ -17,12 +17,12 @@ import Graphics.Histogram
 
 -- Our benchmark harness.
 main = do
-  let n = 1000000 :: Int
+  let n = 100000 :: Int
       μ = 1.0
-      σ = 0.2
+      σ = 1.0
       lb = 0.0
       rb = 2.0
-      s = 114
+      s = 113
       mtrng = RNG.getRNG :: Int -> MT.MTRNG
       mwcrng = RNG.getRNG :: Int -> MWC.MWCRNG
   {-writeFile "test/binomial1.csv" $ -}
@@ -33,10 +33,10 @@ main = do
              Opts.yLabel "y" $ 
              Opts.xLabel "x" $ 
              defOpts histnr
-      normtruncsample = RNG.truncatedNormalSample (mtrng s) 1 0.2 0 2.0 n 
-      histtr = histogram binScott normtruncsample
+      normtruncsample = RNG.truncatedNormalSample (mtrng s) 1 1.0 0 2.0 n 
+      histtr = histogram binSturges normtruncsample
       optstr = Opts.title "truncated" $ 
-             Opts.yLabel "y" $ 
+             Opts.yLabel "#" $ 
              Opts.xLabel "x" $ 
              defOpts histtr
   print $ show $ sum normtruncsample
