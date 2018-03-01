@@ -1,4 +1,4 @@
-import Test.Test
+import TestHS
 import Test.MTRNG as MT
 import Test.MWC as MWC
 

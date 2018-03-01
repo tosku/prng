@@ -1,4 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
 module Test.Test 
     ( Test
     , runTest
@@ -7,8 +6,6 @@ module Test.Test
     , testFailed
     ) where
 
-import Language.Haskell.TH
-import Control.Lens
 import Data.Tuple
 import System.Console.ANSI
 import System.Exit
@@ -17,7 +14,6 @@ data Test = Test
   { _name :: String
   , _outcome :: Either (String, String) String
   } deriving (Show, Eq)
-makeLenses ''Test
 
 testPassed :: String -> String -> Test
 testPassed t s = Test 

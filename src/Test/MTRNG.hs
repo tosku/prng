@@ -4,7 +4,7 @@ import qualified Data.List as L
 import Data.IntMap
 import qualified Data.Vector                   as V
 
-import Test.Test
+import TestHS
 import qualified Data.PRNG as RNG
 import qualified Data.PRNG.MTRNG as MT
 
