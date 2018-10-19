@@ -8,7 +8,7 @@ Maintainer  : mail@tpapak.com
 Stability   : experimental
 Portability : POSIX
 
-PRNG Class definitions
+Deterministic (Pure) Pseudo Random Number Generator Class definitions.
  -}
 
 module Data.PRNG
@@ -93,11 +93,6 @@ truncatedNormalSample r μ σ f t n
           )
      in map invtruncnormcdf uds
 
-
--- | probability of i successes of binomial distribution
-
--- | Inverted binomial cumulative distribution function
-{-invbinomcdf :: Double -> Int -> Double -> Int-}
 
 -- | List of doubles from the binomial distribution given 
 -- RNG -> n -> p -> length of list
